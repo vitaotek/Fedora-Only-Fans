@@ -1,8 +1,10 @@
 # <img src="icone_app.png" width="55" align="center"> Fedora Only Fans (FOF)
 
-
+![Autor](https://img.shields.io/badge/Criador-Vit%C3%A3oTub-blue?style=flat-square)
+![Versão](https://img.shields.io/badge/Vers%C3%A3o-v0.1--alpha-orange?style=flat-square)
 
 > Deixando o seu Fedora 44 KDE pronto para o "play" de forma visual, rápida e sem complicação.
+
 
 
 O **Fedora Only Fans** é um guia interativo com interface web projetado para usuários iniciantes (e também para os usuários avançados que buscam praticidade). O objetivo é transformar uma instalação limpa do Fedora 44 KDE em um sistema operacional completo, com todos os codecs, repositórios e ferramentas essenciais ativadas — **tudo visualmente e sem precisar usar o terminal**.

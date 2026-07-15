@@ -177,9 +177,20 @@
 <body>
 
     <div class="container">
+        <!-- Bloco do Cabeçalho Atualizado com Links em Nova Janela -->
         <header>
             <h1>Painel de Configuração Fedora</h1>
             <p>Gerencie e automatize as instalações do seu sistema de forma visual</p>
+            
+            <!-- Selos de Identificação do Criador e Versão com Links -->
+            <div style="margin-top: 1.2rem; display: flex; justify-content: center; gap: 0.75rem; font-size: 0.85rem;">
+                <a href="#" onclick="event.preventDefault(); window.open('https://www.vitaotub.com', '_blank', 'noopener,noreferrer');" style="text-decoration: none; background-color: var(--border); padding: 0.35rem 0.75rem; border-radius: 6px; color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.05); display: inline-flex; align-items: center; gap: 0.4rem; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='var(--accent)'" onmouseout="this.style.backgroundColor='var(--border)'">
+                    👤 Criador: <strong>VitãoTub</strong>
+                </a>
+                <a href="#" onclick="event.preventDefault(); window.open('https://github.com/vitaotek/Fedora-Only-Fans/blob/main/README.md', '_blank', 'noopener,noreferrer');" style="text-decoration: none; background-color: rgba(217, 119, 6, 0.2); padding: 0.35rem 0.75rem; border-radius: 6px; color: #fbd38d; border: 1px solid #d97706; font-weight: bold; display: inline-flex; align-items: center; gap: 0.4rem; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(217, 119, 6, 0.4)'" onmouseout="this.style.backgroundColor='rgba(217, 119, 6, 0.2)'">
+                    🏷️ Versão: 0.1 alpha
+                </a>
+            </div>
         </header>
 
         <!-- Bloco de Boas-Vindas e Atualização Inicial -->

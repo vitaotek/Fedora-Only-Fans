@@ -28,9 +28,7 @@ Com o FOF você:
 
 ## 💻 Como Rodar o FOF localmente?
 
-
 Para inicializar o painel, baixe todos os arquivos deste repositório, abra o terminal na pasta onde salvou o projeto e execute os comandos abaixo:
-
 
 ```bash
 chmod +x iniciar_guia.sh

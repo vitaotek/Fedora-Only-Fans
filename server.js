@@ -42,25 +42,37 @@ function removerProgresso(idComando) {
 }
 
 function verificarSeVersaoExiste(versao, callback) {
-    // Correção de sintaxe na interpolação da variável ${versao}
-    const urlCheck = `https://fedoraproject.org${versao}&arch=x86_64`;
+    // Validação real apontando para o espelho público do Fedora para verificar se a release alvo já existe
+    const urlCheck = `https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-${versao}&arch=x86_64`;
     exec(`curl -s --max-time 4 -o /dev/null -w "%{http_code}" "${urlCheck}"`, (err, stdout) => {
         const statusCode = parseInt(stdout.trim(), 10);
+        // Se retornar 200, a versão já está nos servidores oficiais
         if (!err && statusCode === 200) callback(true);
         else callback(false);
     });
 }
 
 function executarComSudoGrafico(comandoOriginal, idComando, isReversao, callback) {
+    const envGrafico = { env: { ...process.env, DISPLAY: process.env.DISPLAY || ':0' } };
     const comandoPrompt = `kdialog --password "Este ajuste requer privilégios de administrador. Digite sua senha:" --title "Autenticação do Sistema"`;
 
-    exec(comandoPrompt, (errPrompt, senha, stderrPrompt) => {
+    exec(comandoPrompt, envGrafico, (errPrompt, senha, stderrPrompt) => {
         if (errPrompt || !senha) {
             return callback(new Error("Autenticação cancelada pelo usuário."), "", "Operação abortada.");
         }
 
-        const senhaLimpa = senha.trim();
-        const comandoComSudoS = comandoOriginal.replace(/sudo /g, `echo '${senhaLimpa}' | sudo -S `);
+        const senhaLimpa = senha.trim().replace(/'/g, "'\\''"); // Sanitiza aspas da senha
+
+        // Remove "sudo" redundantes
+        const comandoSemSudoRepetido = comandoOriginal.replace(/sudo /g, '');
+
+        // CORREÇÃO CRUCIAL: Escapa de forma segura tanto aspas duplas quanto simples para rodar dentro do sh -c sem engasgar
+        const comandoEscapado = comandoSemSudoRepetido
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\$/g, '\\$');
+
+        const comandoComSudoS = `echo '${senhaLimpa}' | sudo -S sh -c "${comandoEscapado}"`;
 
         exec(comandoComSudoS, (error, stdout, stderr) => {
             let stderrFiltrado = stderr ? stderr.replace(/\[sudo\] password for .+: /g, '') : '';
@@ -132,7 +144,6 @@ const server = http.createServer((req, res) => {
 
                 if (comando.includes('system-upgrade download')) {
                     const match = comando.match(/--releasever=(\d+)/);
-                    // Correção aqui: captura o grupo [1] em vez de passar o objeto de retorno completo
                     const versaoAlvo = match ? match[1] : null;
 
                     if (versaoAlvo) {
@@ -141,7 +152,7 @@ const server = http.createServer((req, res) => {
                                 res.writeHead(200, { 'Content-Type': 'application/json' });
                                 return res.end(JSON.stringify({
                                     success: false,
-                                    output: `[AVISO DE SEGURANÇA]: O Fedora ${versaoAlvo} ainda NÃO foi lançado oficialmente pelo projeto Fedora!\n\nOperação cancelada.`
+                                    output: `[AVISO DE SEGURANÇA]: O Fedora ${versaoAlvo} ainda NÃO foi lançado oficialmente nos repositórios públicos do projeto!\n\nOperação cancelada.`
                                 }));
                             }
                             procederComExecucao(comando, idComando, isReversao, res);
@@ -164,6 +175,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(` Servidor de Automação Fedora 44 Ativo na Porta ${PORT}`);
+    console.log(` Servidor de Automação Fedora Ativo na Porta ${PORT}`);
     console.log(`====================================================`);
 });
